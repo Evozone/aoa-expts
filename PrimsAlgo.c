@@ -56,7 +56,7 @@ int main() {
     int numVisited = 0;  // Number of vertices visited
     int totalWeight = 0; // Total weight of the MST
 
-    // Visit the first vertex, vertiex 0
+    // Visit the first vertex, vertex 0
     visited[0] = 1;
     numVisited++;
 

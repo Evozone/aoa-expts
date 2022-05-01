@@ -11,32 +11,77 @@
 #include <stdio.h>  // Basic I/O
 #include <stdlib.h> // Standard Library
 
+// Structure to store the edges
+typedef struct Edge {
+    int src;
+    int dest;
+    int weight;
+} Edge;
+
+// Compare function to sort the edges
+int compare(const void *a, const void *b) {
+    return ((*(Edge *)a).weight - (*(Edge *)b).weight);
+}
+
 // Utility Function to find the subset of an element i
 int find(int parent[], int i) {
     // While the parent of i is not -1
-    while (parent[i] != -1) {
-        // Set i to the parent of i
-        i = parent[i];
+    if (parent[i] != -1) {
+        // Recursively call find on the parent of i
+        return find(parent, parent[i]);
     }
-    // Return i
-    return i;
 }
 
 // Utility Function to do union of two subsets (Returns whether union was successful)
 int Union(int parent[], int x, int y) {
-    // If the vertices are not the same, then set the parent of y to x
-    if (x != y) {
-        parent[y] = x;
-        return 1;
+    // Find the subsets of x and y
+    parent[x] = y;
+}
+
+// Kruskal's Algorithm
+int kruskalMST(int **graph, int V, int E) {
+
+    // Dynamic array to store the edges
+    Edge *edges = (Edge *)malloc(E * sizeof(Edge));
+
+    int edgeCounter = 0;
+
+    // Update the edges array with the edges from the graph. Consider only upper triangular matrix
+    for (int i = 0; i < V; i++) {
+        for (int j = i + 1; j < V; j++) {
+            if (graph[i][j] != 0) {
+                edges[edgeCounter].src = i;
+                edges[edgeCounter].dest = j;
+                edges[edgeCounter].weight = graph[i][j];
+                edgeCounter++;
+            }
+        }
     }
-    // Otherwise, return 0
-    return 0;
+
+    // Sort the edges in ascending order of their weights
+    qsort(edges, E, sizeof(Edge), compare);
+
+    // Initialize the parent array
+    int *parent = (int *)malloc(V * sizeof(int));
+    for (int i = 0; i < V; i++) {
+        parent[i] = -1;
+    }
+
+    // Initialize the MST
+    int MST_weight = 0;
+
+    // Iterate over the edges
+    for (int i = 0; i < E; i++) {
+        int x, y;
+        x = find(parent, edges[i].src);
+        y = find(parent, edges[i].dest);
+        }
 }
 
 // Main function
 int main() {
     // Take input for number of vertices
-    int vertices;
+    int vertices, edges = 0;
     printf("Enter number of vertices: ");
     scanf("%d", &vertices);
 
@@ -54,70 +99,23 @@ int main() {
             // If the value is 0, then set the edge to infinity
             if (adjMatrix[i][j] == 0) {
                 adjMatrix[i][j] = INT_MAX;
+            } else {
+                // Else, increment the number of edges
+                edges++;
             }
             // Mirror the adjacency matrix
             adjMatrix[j][i] = adjMatrix[i][j];
         }
     }
 
-    // Array to hold the subset of vertices
-    int *parent = (int *)malloc(vertices * sizeof(int));
+    // Divide the edges by 2
+    edges /= 2;
 
-    // Initialize the parent array to -1
-    for (int i = 0; i < vertices; i++) {
-        parent[i] = -1;
-    }
-
-    // Miscellaneous variables
-    int minEdge = INT_MAX, // Minimum edge
-        minEdgeWeight = 0, // Minimum edge weight
-        v1 = 0,            // First vertex
-        v2 = 0,            // Second vertex
-        a, b,              // Temporary variables
-        numVisited = 0;    // Number of visited vertices
-
-    // Kruskal's Algorithm
-
-    // While there are still unvisited vertices
-    while (numVisited < vertices) {
-        // Take the minimum edge
-        minEdge = INT_MAX;
-        for (int i = 0; i < vertices; i++) {
-            for (int j = 0; j < vertices; j++) {
-                // If the edge is smaller than the minimum edge
-                if (adjMatrix[i][j] < minEdge) {
-                    // Set the minimum edge to the edge
-                    minEdge = adjMatrix[i][j];
-                    // Set the vertices to the vertices
-                    a = v1 = i;
-                    b = v2 = j;
-                }
-            }
-        }
-        v1 = find(parent, v1);
-        v2 = find(parent, v2);
-        // If the union is successful
-        if (Union(parent, v1, v2)) {
-            // Increment the number of visited vertices
-            numVisited++;
-            // Add the edge to the minimum spanning tree
-            printf("Edge %d-%d is added to the MST\n", v1, v2);
-            // Add the edge weight to the minimum spanning tree weight
-            minEdgeWeight += minEdge;
-        }
-        // Set the edge to infinity
-        adjMatrix[a][b] = adjMatrix[b][a] = INT_MAX;
-    }
+    // Call Kruskal's Algorithm
+    int minEdgeWeight = kruskalMST(adjMatrix, vertices, edges);
 
     // Print the minimum spanning tree weight
     printf("The minimum spanning tree weight is: %d\n", minEdgeWeight);
-
-    // Free the memory
-    free(parent);
-    for (int i = 0; i < vertices; i++) {
-        free(adjMatrix[i]);
-    }
-    free(adjMatrix);
 
     return 0;
 }

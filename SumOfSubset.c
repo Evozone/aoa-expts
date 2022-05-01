@@ -86,13 +86,14 @@ void subsetsEqualToSum(int *arr, int size, int targetSum) {
     }
 
     // Sort the array (optional)
-    // Bubble sort
+    // Selection sort
+    int temp;
     for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] > arr[j]) {
+                temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
             }
         }
     }
