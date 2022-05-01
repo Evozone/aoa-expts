@@ -26,10 +26,10 @@ int compare(const void *a, const void *b) {
 // Utility Function to find the subset of an element i
 int find(int parent[], int i) {
     // While the parent of i is not -1
-    if (parent[i] != -1) {
-        // Recursively call find on the parent of i
-        return find(parent, parent[i]);
+    if (parent[i] == -1) {
+        return i;
     }
+    return find(parent, parent[i]);
 }
 
 // Utility Function to do union of two subsets (Returns whether union was successful)
@@ -49,7 +49,7 @@ int kruskalMST(int **graph, int V, int E) {
     // Update the edges array with the edges from the graph. Consider only upper triangular matrix
     for (int i = 0; i < V; i++) {
         for (int j = i + 1; j < V; j++) {
-            if (graph[i][j] != 0) {
+            if (graph[i][j] != INT_MAX) {
                 edges[edgeCounter].src = i;
                 edges[edgeCounter].dest = j;
                 edges[edgeCounter].weight = graph[i][j];
@@ -75,7 +75,22 @@ int kruskalMST(int **graph, int V, int E) {
         int x, y;
         x = find(parent, edges[i].src);
         y = find(parent, edges[i].dest);
+
+        // If the two vertices are not in the same subset
+        if (x != y) {
+            // Add the edge to the MST
+            MST_weight += edges[i].weight;
+
+            // Show which edge is added to the MST
+            printf("Edge %d-%d with weight %d is added to the MST\n", edges[i].src, edges[i].dest, edges[i].weight);
+
+            // Union the two subsets
+            Union(parent, x, y);
         }
+    }
+
+    // Return the MST weight
+    return MST_weight;
 }
 
 // Main function
@@ -111,11 +126,14 @@ int main() {
     // Divide the edges by 2
     edges /= 2;
 
+    // Print newline
+    printf("\n");
+
     // Call Kruskal's Algorithm
     int minEdgeWeight = kruskalMST(adjMatrix, vertices, edges);
 
     // Print the minimum spanning tree weight
-    printf("The minimum spanning tree weight is: %d\n", minEdgeWeight);
+    printf("\nThe minimum spanning tree weight is: %d\n", minEdgeWeight);
 
     return 0;
 }
