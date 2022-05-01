@@ -20,6 +20,11 @@ void naiveStringMatching(char *text, char *pattern, int textSize, int patternSiz
     for (int i = 0; i < textSize - patternSize + 1; i++) {
         // Loop through the pattern
         for (int j = 0; j < patternSize; j++) {
+            // Condition for no match found
+            if (i == textSize - patternSize && text[i+j] != pattern[j]) {
+                printf("Match not found.");
+                break;
+            }
             // If the current character in the text is not equal to the current character in the pattern, break
             if (text[i + j] != pattern[j]) {
                 break;
