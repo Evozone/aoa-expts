@@ -85,6 +85,18 @@ void subsetsEqualToSum(int *arr, int size, int targetSum) {
         totalSum += arr[i];
     }
 
+    // Sort the array (optional)
+    // Bubble sort
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+
     // If the targetSum is more than the smallest element and lower than the total sum,
     if (targetSum >= arr[0] && targetSum <= totalSum) {
         // Call function on the first element node
